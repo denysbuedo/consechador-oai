@@ -2,191 +2,608 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Red de Repositorios Institucionales</title>
+    <title>Red de Repositorios Digitales Institucionales</title>
     <style>
-        body {
-            font-family: system-ui, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f5f5f5;
+        :root {
+            --brand: #051d40;
+            --brand-soft: #e4edf8;
+            --brand-softer: #f5f7fb;
+            --accent: #0b4fb8;
+            --text-main: #051d40;
+            --text-muted: #6b7280;
+            --border-subtle: #d1d5db;
+            --card: #ffffff;
+            --error: #dc2626;
         }
-        header {
-            background: #004b8d;
-            color: white;
-            padding: 1rem 2rem;
-        }
-        header h1 {
-            margin: 0;
-            font-size: 1.4rem;
-        }
-        main {
-            padding: 1rem 2rem;
-        }
-        .search-panel, .stats-panel, .results-panel {
-            background: white;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        label {
-            display: block;
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-        }
-        input, select {
-            width: 100%;
-            padding: 0.4rem;
-            margin-top: 0.2rem;
+
+        * {
             box-sizing: border-box;
         }
-        button {
-            margin-top: 0.8rem;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 4px;
-            background: #004b8d;
-            color: white;
-            cursor: pointer;
-        }
-        button:disabled {
-            opacity: 0.6;
-            cursor: wait;
-        }
-        .filters {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 0.5rem 1rem;
-        }
-        .result-item {
-            border-bottom: 1px solid #eee;
-            padding: 0.5rem 0;
-        }
-        .result-item:last-child {
-            border-bottom: none;
-        }
-        .result-title {
-            font-weight: 600;
+
+        body {
             margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(180deg, #f9fafb 0, #edf2ff 40%, #f9fafb 100%);
+            color: var(--text-main);
+            min-height: 100vh;
         }
-        .result-meta {
-            font-size: 0.8rem;
-            color: #555;
+
+        header {
+    background: var(--brand);
+    color: #ffffff;
+    padding: 1.6rem 2.5rem;      /* más alto y un poco más ancho */
+    display: flex;
+    flex-direction: column;      /* título y subtítulo en columna bien centrada */
+    align-items: flex-start;
+    justify-content: center;
+    box-shadow: 0 2px 12px rgba(15, 23, 42, 0.35);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.8rem;           /* título más protagonista */
+    line-height: 1.2;
+}
+
+header p {
+    margin: 0.35rem 0 0 0;
+    font-size: 0.95rem;          /* subtítulo un poco más grande */
+    opacity: 0.95;
+}
+
+        main {
+            padding: 1.2rem 2rem 1.5rem;
+            max-width: 1280px;
+            margin: 0 auto;
+            min-height: calc(100vh - 60px);
         }
-        .badge {
-            display: inline-block;
-            background: #e0e7ff;
-            color: #1d2a5f;
-            border-radius: 999px;
-            padding: 0.1rem 0.6rem;
-            font-size: 0.75rem;
-            margin-right: 0.25rem;
-        }
-        .stats-grid {
+
+        @media (max-width: 900px) {
+    header {
+        padding: 0.8rem 1rem;
+    }
+    main {
+        padding: 1rem;
+    }
+}
+
+        /* LAYOUT DOS COLUMNAS */
+
+        .layout {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
             gap: 1rem;
+            align-items: flex-start;
         }
-        .stats-card {
-            background: #fafafa;
-            border-radius: 6px;
-            padding: 0.5rem 0.7rem;
-            border: 1px solid #e2e2e2;
-            max-height: 200px;
-            overflow-y: auto;
+
+        .layout-main {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
         }
-        .stats-card h3 {
+
+        .layout-sidebar {
+            position: sticky;
+            top: 1rem;
+        }
+
+        @media (max-width: 1000px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+            .layout-sidebar {
+                position: static;
+            }
+        }
+
+        .panel {
+            background: var(--card);
+            border-radius: 14px;
+            padding: 1rem 1.2rem;
+            border: 1px solid var(--border-subtle);
+            box-shadow: 0 6px 16px rgba(148, 163, 184, 0.25);
+        }
+
+        .panel h2 {
             margin-top: 0;
             font-size: 0.95rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text-muted);
         }
+
+        /* ESTADÍSTICAS */
+
+        .stats-summary {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .stat-tile {
+            flex: 1 1 220px;
+            background: linear-gradient(135deg, var(--brand-soft), #ffffff);
+            border-radius: 10px;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #cbd5f5;
+        }
+
+        .stat-tile-label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .stat-tile-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 0.1rem;
+            color: var(--brand);
+        }
+
+        .stats-card {
+            background: #f9fafb;
+            border-radius: 10px;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid var(--border-subtle);
+            font-size: 0.8rem;
+            max-height: 230px;
+            overflow-y: auto;
+        }
+
+        .stats-card h3 {
+            margin: 0 0 0.3rem 0;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+        }
+
         .stats-row {
             display: flex;
             justify-content: space-between;
+            padding: 0.12rem 0;
+        }
+
+        .stats-row span:last-child {
+            color: var(--text-muted);
+        }
+
+        .stats-triple-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.6rem;
+            margin-top: 0.6rem;
+        }
+
+        .repos-section {
+            margin-top: 0.9rem;
+        }
+
+        .repos-section h3 {
+            margin: 0 0 0.4rem 0;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+        }
+
+        .repos-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.7rem;
+        }
+
+        .repo-card {
+            border-radius: 10px;
+            padding: 0.6rem 0.8rem;
+            background: var(--brand-softer);
+            border: 1px solid #cbd5f5;
             font-size: 0.8rem;
         }
-        .pagination {
+
+        .repo-name {
+            font-weight: 600;
+            margin: 0 0 0.15rem 0;
+            color: var(--brand);
+        }
+
+        .repo-inst {
+            margin: 0 0 0.25rem 0;
+            color: var(--text-muted);
+            font-size: 0.78rem;
+        }
+
+        .repo-metrics {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .repo-count {
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .repo-percent {
+            color: var(--text-muted);
+        }
+
+        /* BÚSQUEDA */
+
+        label {
+            display: block;
+            font-size: 0.75rem;
+            margin-bottom: 0.2rem;
+            color: var(--text-muted);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.45rem 0.6rem;
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            background: #f9fafb;
+            color: var(--text-main);
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px rgba(11, 79, 184, 0.2);
+            background: #ffffff;
+        }
+
+        .search-main-input {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .search-main-input input {
+            border-radius: 999px;
+            font-size: 0.95rem;
+            padding-left: 2.4rem;
+            border-color: #bfdbfe;
+            background: linear-gradient(90deg, #f0f4ff, #ffffff);
+        }
+
+        .search-main-input .icon {
+            position: relative;
+            left: 2.1rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .filters-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .filters-group {
+            flex: 1 1 180px;
+        }
+
+        .filters-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
             margin-top: 0.8rem;
+        }
+
+        .button-primary {
+            border-radius: 999px;
+            border: none;
+            padding: 0.45rem 1.4rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--accent), #0f76ff);
+            color: #f9fafb;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            box-shadow: 0 4px 12px rgba(11, 79, 184, 0.35);
+        }
+
+        .button-primary:hover {
+            filter: brightness(1.04);
+        }
+
+        .button-primary:disabled {
+            opacity: 0.6;
+            cursor: wait;
+            box-shadow: none;
+        }
+
+        .button-secondary {
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            padding: 0.35rem 0.9rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            background: #f9fafb;
+            color: var(--text-muted);
+        }
+
+        .button-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: #ffffff;
+        }
+
+        .status-bar {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.7rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .status-ok {
+            color: var(--accent);
+        }
+
+        .status-error {
+            color: var(--error);
+        }
+
+        /* RESULTADOS */
+
+        .results-container {
+            display: none; /* se muestra solo tras la primera búsqueda */
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .results-panel {
+            background: var(--card);
+            border-radius: 14px;
+            padding: 0.9rem 1.1rem;
+            border: 1px solid var(--border-subtle);
+            box-shadow: 0 6px 16px rgba(148, 163, 184, 0.25);
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .results-header h2 {
+            margin: 0;
+            font-size: 0.95rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .results-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .pagination {
+            margin-top: 0.4rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .results-list {
+            margin-top: 0.4rem;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 0.5rem 0.7rem;
+            background: #f9fafb;
+        }
+
+        .result-card {
+            padding: 0.6rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .result-card:last-child {
+            border-bottom: none;
+        }
+
+        .result-title {
+            margin: 0 0 0.15rem 0;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .result-title a {
+            color: var(--text-main);
+            text-decoration: none;
+        }
+
+        .result-title a:hover {
+            text-decoration: underline;
+            color: var(--accent);
+        }
+
+        .result-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin: 0.1rem 0 0.2rem 0;
+        }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+
+        .chip {
+            font-size: 0.72rem;
+            border-radius: 999px;
+            padding: 0.12rem 0.55rem;
+            background: #e5e7eb;
+            color: var(--text-muted);
+        }
+
+        .chip.type {
+            background: var(--brand-soft);
+            color: var(--brand);
+            border: 1px solid #c7d2fe;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 1.2rem 0.5rem;
             font-size: 0.85rem;
+            color: var(--text-muted);
         }
     </style>
 </head>
 <body>
 <header>
-    <h1>Buscador | Red de Repositorios Institucionales</h1>
+    <div>
+        <h1>Red de Repositorios Digitales Institucionales</h1>
+        <p>Buscador unificado de resultados científicos de las universidades</p>
+    </div>
 </header>
+
 <main>
-    <section class="search-panel">
-        <h2>Búsqueda</h2>
-        <label>
-            Texto libre
-            <input type="text" id="q" placeholder="Título, autor, palabra clave...">
-        </label>
+    <div class="layout">
+        <!-- COLUMNA IZQUIERDA: BÚSQUEDA + RESULTADOS -->
+        <div class="layout-main">
+            <!-- 2. BÚSQUEDA -->
+            <section class="panel">
+                <h2>Búsqueda</h2>
 
-        <div class="filters">
-            <div>
-                <label>
-                    Tipo de documento
-                    <input type="text" id="type" placeholder="Artículo, Tesis...">
-                </label>
-            </div>
-            <div>
-                <label>
-                    Repositorio
-                    <select id="repository">
-                        <option value="">(Todos)</option>
-                        <option value="Omeka UH Scriptorium">UH</option>
-                        <option value="DSpace UCLV">UCLV</option>
-                    </select>
-                </label>
-            </div>
-            <div>
-                <label>
-                    Año desde
-                    <input type="number" id="year_from" min="1000" max="9999">
-                </label>
-            </div>
-            <div>
-                <label>
-                    Año hasta
-                    <input type="number" id="year_to" min="1000" max="9999">
-                </label>
+                <div class="search-main-input">
+                    <span class="icon">🔍</span>
+                    <input type="text"
+                           id="q"
+                           placeholder="Título, autor, palabra clave…">
+                </div>
+
+                <div class="filters-row">
+                    <div class="filters-group">
+                        <label for="repository">Repositorio</label>
+                        <select id="repository">
+                            <option value="">(Todos)</option>
+                        </select>
+                    </div>
+                    <div class="filters-group">
+                        <label for="type_filter">Tipo de documento</label>
+                        <select id="type_filter">
+                            <option value="">(Todos)</option>
+                            <option value="Artículo">Artículo</option>
+                            <option value="Tesis de Grado">Tesis de Grado</option>
+                            <option value="Tesis de Maestría">Tesis de Maestría</option>
+                            <option value="Tesis de Doctorado">Tesis de Doctorado</option>
+                            <option value="Capítulos de libro">Capítulos de libro</option>
+                            <option value="Otros">Otros</option>
+                            <option value="(Sin tipo)">(Sin tipo)</option>
+                        </select>
+                    </div>
+                    <div class="filters-group">
+                        <label for="year_from">Año desde</label>
+                        <input type="number" id="year_from" min="1000" max="9999" placeholder="Ej: 2015">
+                    </div>
+                    <div class="filters-group">
+                        <label for="year_to">Año hasta</label>
+                        <input type="number" id="year_to" min="1000" max="9999" placeholder="Ej: 2024">
+                    </div>
+                </div>
+
+                <div class="filters-actions">
+                    <button id="searchBtn" class="button-primary">
+                        <span>Buscar</span>
+                        <span>⏎</span>
+                    </button>
+
+                    <button id="clearBtn" class="button-secondary">
+                        Limpiar filtros
+                    </button>
+                </div>
+
+                <div class="status-bar">
+                    <span id="statusMessage" class="status-ok">Listo</span>
+                    <span id="recordsInfo"></span>
+                </div>
+            </section>
+
+            <!-- 3. RESULTADOS (solo tras búsqueda) -->
+            <div id="resultsContainer" class="results-container">
+                <section class="results-panel">
+                    <div class="results-header">
+                        <h2>Resultados de la búsqueda</h2>
+                        <div class="results-meta" id="resultsMeta"></div>
+                    </div>
+
+                    <div class="pagination">
+                        <span id="pageInfo">Página 1 · 0 resultados</span>
+                        <div style="display:flex; gap:0.4rem;">
+                            <button id="prevPageBtn" class="button-secondary">◀ Anterior</button>
+                            <button id="nextPageBtn" class="button-secondary">Siguiente ▶</button>
+                        </div>
+                    </div>
+
+                    <div class="results-list" id="results">
+                        <!-- resultados -->
+                    </div>
+                    <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.25rem;">
+                        Desplácese hacia abajo para ver más resultados.
+                    </div>
+                </section>
             </div>
         </div>
 
-        <button id="searchBtn">Buscar</button>
+        <!-- COLUMNA DERECHA: ESTADÍSTICAS -->
+        <aside class="layout-sidebar">
+            <!-- 1. ESTADÍSTICAS GENERALES -->
+            <section class="panel">
+                <h2>Estadísticas generales</h2>
 
-        <div class="pagination">
-            <button id="prevPageBtn">◀ Anterior</button>
-            <span id="pageInfo">Página 1</span>
-            <button id="nextPageBtn">Siguiente ▶</button>
-        </div>
-    </section>
+                <!-- Totales -->
+                <div class="stats-summary">
+                    <div class="stat-tile">
+                        <div class="stat-tile-label">Repositorios cosechados</div>
+                        <div class="stat-tile-value" id="stat_repos">-</div>
+                    </div>
+                    <div class="stat-tile">
+                        <div class="stat-tile-label">Total de documentos</div>
+                        <div class="stat-tile-value" id="stat_docs">-</div>
+                    </div>
+                </div>
 
-    <section class="results-panel">
-        <h2>Resultados</h2>
-        <div id="results"></div>
-    </section>
+                <!-- Documentos por tipo + autores + temáticas -->
+                <div class="stats-triple-grid">
+                    <div class="stats-card">
+                        <h3>Documentos por tipo</h3>
+                        <div id="stats_type_mapped"></div>
+                    </div>
 
-    <section class="stats-panel">
-        <h2>Estadísticas</h2>
-        <div class="stats-grid">
-            <div class="stats-card">
-                <h3>Por repositorio</h3>
-                <div id="stats_repo"></div>
-            </div>
-            <div class="stats-card">
-                <h3>Por tipo de documento</h3>
-                <div id="stats_type"></div>
-            </div>
-            <div class="stats-card">
-                <h3>Por año de publicación</h3>
-                <div id="stats_year"></div>
-            </div>
-        </div>
-    </section>
+                    <div class="stats-card">
+                        <h3>Autores más prolíficos</h3>
+                        <div id="stats_top_authors"></div>
+                    </div>
+
+                    <div class="stats-card">
+                        <h3>Temáticas más frecuentes</h3>
+                        <div id="stats_top_topics"></div>
+                    </div>
+                </div>
+
+                <!-- Detalle de repos (sidebar) -->
+                <div class="repos-section">
+                    <h3>Repositorios cosechados</h3>
+                    <div id="reposCards" class="repos-grid"></div>
+                </div>
+            </section>
+        </aside>
+    </div>
 </main>
 
 <script>
@@ -194,6 +611,60 @@
 
     let currentPage = 1;
     const pageSize = 20;
+    let lastResultCount = 0;
+    let hasSearched = false;
+
+    // Mapeo de tipos crudos -> categorías legibles
+    const TYPE_MAP = {
+        "info:eu-repo/semantics/masterThesis": "Tesis de Maestría",
+        "info:eu-repo/semantics/bachelorThesis": "Tesis de Grado",
+        "info:eu-repo/semantics/doctoralThesis": "Tesis de Doctorado",
+        "info:eu-repo/semantics/Thesis": "Tesis (otros)",
+        "journalArticle": "Artículo",
+        "book-chapter": "Capítulos de libro",
+        "https://scriptorium.uh.cu Scriptorium: Repositorio institucional de tesis de la Universidad de La Habana": "Tesis de Grado",
+        "info:eu-repo/semantics/publishedVersion": "Versión publicada",
+        "info:eu-repo/semantic/publishedVersion": "Versión publicada"
+    };
+
+    // Orden deseado de categorías
+    const TYPE_CATEGORY_ORDER = [
+        "Artículo",
+        "Tesis de Grado",
+        "Tesis de Maestría",
+        "Tesis de Doctorado",
+        "Capítulos de libro",
+        "Otros",
+        "(Sin tipo)"
+    ];
+
+    // Para el filtro: categoría -> lista de valores crudos
+    const TYPE_FILTER_TO_RAW = {
+        "Artículo": ["journalArticle"],
+        "Tesis de Grado": [
+            "info:eu-repo/semantics/bachelorThesis",
+            "https://scriptorium.uh.cu Scriptorium: Repositorio institucional de tesis de la Universidad de La Habana"
+        ],
+        "Tesis de Maestría": ["info:eu-repo/semantics/masterThesis"],
+        "Tesis de Doctorado": ["info:eu-repo/semantics/doctoralThesis"],
+        "Capítulos de libro": ["book-chapter"],
+        "Otros": [],
+        "(Sin tipo)": []
+    };
+
+    function mapRawTypeToCategory(raw) {
+        if (!raw) return "(Sin tipo)";
+        if (Object.prototype.hasOwnProperty.call(TYPE_MAP, raw)) {
+            return TYPE_MAP[raw];
+        }
+        return "Otros";
+    }
+
+    function setStatus(message, isError = false) {
+        const status = document.getElementById("statusMessage");
+        status.textContent = message;
+        status.className = isError ? "status-error" : "status-ok";
+    }
 
     async function fetchStats() {
         try {
@@ -202,64 +673,255 @@
             renderStats(data);
         } catch (e) {
             console.error("Error cargando estadísticas", e);
+            setStatus("Error cargando estadísticas", true);
+        }
+    }
+
+    async function fetchTopLists() {
+        const authorsDiv = document.getElementById("stats_top_authors");
+        const topicsDiv = document.getElementById("stats_top_topics");
+
+        try {
+            const pageSize = 100;
+            const maxPages = 100;
+            let allItems = [];
+
+            for (let page = 1; page <= maxPages; page++) {
+                const res = await fetch(
+                    `${apiBase}/search/advanced?page=${page}&page_size=${pageSize}`
+                );
+
+                if (!res.ok) {
+                    console.error("Respuesta no OK en fetchTopLists:", res.status);
+                    break;
+                }
+
+                const data = await res.json();
+
+                if (!Array.isArray(data) || data.length === 0) {
+                    break;
+                }
+
+                allItems = allItems.concat(data);
+
+                if (data.length < pageSize) {
+                    break;
+                }
+            }
+
+            if (allItems.length === 0) {
+                authorsDiv.innerHTML =
+                    '<div class="stats-row"><span>No hay datos de autores todavía.</span><span></span></div>';
+                topicsDiv.innerHTML =
+                    '<div class="stats-row"><span>No hay datos de temáticas todavía.</span><span></span></div>';
+                return;
+            }
+
+            renderTopLists(allItems);
+        } catch (e) {
+            console.error("Error cargando top autores/temáticas", e);
+            authorsDiv.innerHTML =
+                '<div class="stats-row"><span>Error al cargar autores.</span><span></span></div>';
+            topicsDiv.innerHTML =
+                '<div class="stats-row"><span>Error al cargar temáticas.</span><span></span></div>';
         }
     }
 
     function renderStats(data) {
-        const repoDiv = document.getElementById("stats_repo");
-        const typeDiv = document.getElementById("stats_type");
-        const yearDiv = document.getElementById("stats_year");
+        const byRepo = data.by_repository || [];
+        const byTypeRaw = data.by_type || [];
 
-        repoDiv.innerHTML = "";
-        (data.by_repository || []).forEach(row => {
-            const div = document.createElement("div");
-            div.className = "stats-row";
-            div.innerHTML = `<span>${row.repository}</span><span>${row.count}</span>`;
-            repoDiv.appendChild(div);
+        // Totales
+        const totalDocs = byRepo.reduce((sum, r) => sum + (r.count || 0), 0);
+        const nRepos = byRepo.length;
+
+        document.getElementById("stat_repos").textContent = nRepos.toString();
+        document.getElementById("stat_docs").textContent = totalDocs.toString();
+
+        // Rellenar select de repos
+        const repoSelect = document.getElementById("repository");
+        repoSelect.innerHTML = '<option value="">(Todos)</option>';
+        byRepo.forEach(row => {
+            if (!row.repository) return;
+            const opt = document.createElement("option");
+            opt.value = row.repository;
+            opt.textContent = row.repository;
+            repoSelect.appendChild(opt);
         });
 
-        typeDiv.innerHTML = "";
-        (data.by_type || []).forEach(row => {
-            const div = document.createElement("div");
-            div.className = "stats-row";
-            div.innerHTML = `<span>${row.type || "(Sin tipo)"}</span><span>${row.count}</span>`;
-            typeDiv.appendChild(div);
+        // Documentos por tipo -> categorías
+        const mappedCounts = {};
+
+        byTypeRaw.forEach(row => {
+            const raw = row.type;
+            const count = row.count || 0;
+            let category;
+
+            if (!raw) {
+                category = "(Sin tipo)";
+            } else if (Object.prototype.hasOwnProperty.call(TYPE_MAP, raw)) {
+                category = TYPE_MAP[raw];
+            } else {
+                category = "Otros";
+            }
+
+            mappedCounts[category] = (mappedCounts[category] || 0) + count;
         });
 
-        yearDiv.innerHTML = "";
-        (data.by_year || []).forEach(row => {
-            const div = document.createElement("div");
-            div.className = "stats-row";
-            div.innerHTML = `<span>${row.year}</span><span>${row.count}</span>`;
-            yearDiv.appendChild(div);
+        const typeContainer = document.getElementById("stats_type_mapped");
+        typeContainer.innerHTML = "";
+
+        TYPE_CATEGORY_ORDER.forEach(cat => {
+            const count = mappedCounts[cat] || 0;
+            if (count === 0) return;
+            const rowEl = document.createElement("div");
+            rowEl.className = "stats-row";
+            rowEl.innerHTML = `<span>${cat}</span><span>${count}</span>`;
+            typeContainer.appendChild(rowEl);
         });
+
+        if (!typeContainer.hasChildNodes()) {
+            typeContainer.innerHTML = '<div class="stats-row"><span>No hay datos de tipo todavía.</span><span></span></div>';
+        }
+
+        // Cards por repositorio
+        const reposDiv = document.getElementById("reposCards");
+        reposDiv.innerHTML = "";
+
+        byRepo.forEach(row => {
+            const name = row.repository || "(Repositorio sin nombre)";
+            const count = row.count || 0;
+            const percent = totalDocs ? ((count / totalDocs) * 100).toFixed(1) : "0.0";
+
+            const card = document.createElement("div");
+            card.className = "repo-card";
+
+            const nameEl = document.createElement("p");
+            nameEl.className = "repo-name";
+            nameEl.textContent = name;
+
+            const instEl = document.createElement("p");
+            instEl.className = "repo-inst";
+            instEl.textContent = "Repositorio institucional";
+
+            const metrics = document.createElement("div");
+            metrics.className = "repo-metrics";
+            metrics.innerHTML = `
+                <span class="repo-count">${count} documentos</span>
+                <span class="repo-percent">${percent}% del total</span>
+            `;
+
+            card.appendChild(nameEl);
+            card.appendChild(instEl);
+            card.appendChild(metrics);
+
+            reposDiv.appendChild(card);
+        });
+
+        if (byRepo.length === 0) {
+            reposDiv.innerHTML = '<p class="repo-inst">Aún no hay repositorios cosechados.</p>';
+        }
+    }
+
+    function renderTopLists(items) {
+        const authorsDiv = document.getElementById("stats_top_authors");
+        const topicsDiv = document.getElementById("stats_top_topics");
+
+        const authorCounts = {};
+        const topicCounts = {};
+
+        (items || []).forEach(r => {
+            (r.authors || []).forEach(a => {
+                if (!a) return;
+                const key = a.trim();
+                if (!key) return;
+                authorCounts[key] = (authorCounts[key] || 0) + 1;
+            });
+
+            (r.keywords || []).forEach(k => {
+                if (!k) return;
+                const key = k.trim().toLowerCase();
+                if (!key) return;
+                topicCounts[key] = (topicCounts[key] || 0) + 1;
+            });
+        });
+
+        function topN(counts, n) {
+            return Object.entries(counts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, n);
+        }
+
+        const topAuthors = topN(authorCounts, 5);
+        const topTopics = topN(topicCounts, 5);
+
+        authorsDiv.innerHTML = "";
+        topicsDiv.innerHTML = "";
+
+        if (topAuthors.length === 0) {
+            authorsDiv.innerHTML = '<div class="stats-row"><span>No hay datos de autores todavía.</span><span></span></div>';
+        } else {
+            topAuthors.forEach(([name, count]) => {
+                const row = document.createElement("div");
+                row.className = "stats-row";
+                row.innerHTML = `<span>${name}</span><span>${count}</span>`;
+                authorsDiv.appendChild(row);
+            });
+        }
+
+        if (topTopics.length === 0) {
+            topicsDiv.innerHTML = '<div class="stats-row"><span>No hay datos de temáticas todavía.</span><span></span></div>';
+        } else {
+            topTopics.forEach(([topic, count]) => {
+                const row = document.createElement("div");
+                row.className = "stats-row";
+                const label = topic.charAt(0).toUpperCase() + topic.slice(1);
+                row.innerHTML = `<span>${label}</span><span>${count}</span>`;
+                topicsDiv.appendChild(row);
+            });
+        }
     }
 
     async function doSearch() {
         const btn = document.getElementById("searchBtn");
         btn.disabled = true;
+        setStatus("Buscando…");
 
         const q = document.getElementById("q").value.trim();
-        const type = document.getElementById("type").value.trim();
         const repository = document.getElementById("repository").value;
+        const typeCategory = document.getElementById("type_filter").value;
         const year_from = document.getElementById("year_from").value;
         const year_to = document.getElementById("year_to").value;
 
         const params = new URLSearchParams();
         if (q) params.append("q", q);
-        if (type) params.append("type", type);
         if (repository) params.append("repository", repository);
         if (year_from) params.append("year_from", year_from);
         if (year_to) params.append("year_to", year_to);
+
+        if (typeCategory) {
+            const rawList = TYPE_FILTER_TO_RAW[typeCategory] || [];
+            if (rawList.length > 0) {
+                params.append("type", rawList[0]);
+            } else if (typeCategory === "(Sin tipo)") {
+                // sin filtro específico de tipo
+            }
+        }
+
         params.append("page", currentPage);
         params.append("page_size", pageSize);
 
         try {
             const res = await fetch(`${apiBase}/search/advanced?` + params.toString());
             const data = await res.json();
+            lastResultCount = Array.isArray(data) ? data.length : 0;
+            hasSearched = true;
+            document.getElementById("resultsContainer").style.display = "flex";
             renderResults(data);
+            setStatus("Listo");
         } catch (e) {
             console.error("Error en búsqueda", e);
+            setStatus("Error en la búsqueda", true);
         } finally {
             btn.disabled = false;
         }
@@ -268,61 +930,105 @@
     function renderResults(items) {
         const container = document.getElementById("results");
         const pageInfo = document.getElementById("pageInfo");
-        pageInfo.textContent = `Página ${currentPage}`;
+        const resultsMeta = document.getElementById("resultsMeta");
+        const recordsInfo = document.getElementById("recordsInfo");
+
+        pageInfo.textContent = `Página ${currentPage} · ${lastResultCount} resultados`;
+        recordsInfo.textContent = lastResultCount
+            ? `Resultados en esta página: ${lastResultCount}`
+            : "";
 
         container.innerHTML = "";
+
         if (!items || items.length === 0) {
-            container.textContent = "Sin resultados para los filtros seleccionados.";
+            resultsMeta.textContent = hasSearched ? "Sin resultados para los filtros seleccionados." : "";
+            const empty = document.createElement("div");
+            empty.className = "empty-state";
+            empty.textContent = hasSearched
+                ? "No se encontraron registros con los criterios indicados."
+                : "Realice una búsqueda para ver resultados.";
+            container.appendChild(empty);
             return;
         }
 
-        items.forEach(r => {
-            const div = document.createElement("div");
-            div.className = "result-item";
+        const q = document.getElementById("q").value.trim();
+        const repo = document.getElementById("repository").value;
+        const typeCategory = document.getElementById("type_filter").value;
+        let metaText = [];
+        if (q) metaText.push(`Texto: “${q}”`);
+        if (repo) metaText.push(`Repositorio: ${repo}`);
+        if (typeCategory) metaText.push(`Tipo: ${typeCategory}`);
+        resultsMeta.textContent = metaText.join(" · ");
 
-            const title = document.createElement("p");
-            title.className = "result-title";
+        items.forEach(r => {
+            const card = document.createElement("div");
+            card.className = "result-card";
+
+            const titleEl = document.createElement("p");
+            titleEl.className = "result-title";
 
             if (r.url_landing_page) {
-                title.innerHTML = `<a href="${r.url_landing_page}" target="_blank" rel="noopener">${r.title}</a>`;
+                titleEl.innerHTML = `<a href="${r.url_landing_page}" target="_blank" rel="noopener">${r.title}</a>`;
             } else {
-                title.textContent = r.title;
+                titleEl.textContent = r.title;
             }
 
             const meta = document.createElement("p");
             meta.className = "result-meta";
             const year = r.date_issued ? r.date_issued.substring(0, 4) : "";
-            meta.textContent = [
-                r.authors && r.authors.length ? r.authors.join("; ") : "",
-                r.institution || "",
-                r.repository || "",
-                year
-            ].filter(Boolean).join(" | ");
+            const metaParts = [];
+            if (r.authors && r.authors.length) metaParts.push(r.authors.join("; "));
+            if (r.institution) metaParts.push(r.institution);
+            if (r.repository) metaParts.push(r.repository);
+            if (year) metaParts.push(year);
+            meta.textContent = metaParts.join(" · ");
 
-            const badges = document.createElement("div");
-            if (r.type) {
-                const b = document.createElement("span");
-                b.className = "badge";
-                b.textContent = r.type;
-                badges.appendChild(b);
+            const chips = document.createElement("div");
+            chips.className = "chips";
+
+            const typeLabel = mapRawTypeToCategory(r.type);
+            if (typeLabel) {
+                const c = document.createElement("span");
+                c.className = "chip type";
+                c.textContent = typeLabel;
+                chips.appendChild(c);
             }
-            (r.keywords || []).slice(0, 5).forEach(k => {
-                const b = document.createElement("span");
-                b.className = "badge";
-                b.textContent = k;
-                badges.appendChild(b);
+
+            (r.keywords || []).slice(0, 6).forEach(k => {
+                const c = document.createElement("span");
+                c.className = "chip";
+                c.textContent = k;
+                chips.appendChild(c);
             });
 
-            div.appendChild(title);
-            div.appendChild(meta);
-            div.appendChild(badges);
-            container.appendChild(div);
+            card.appendChild(titleEl);
+            card.appendChild(meta);
+            card.appendChild(chips);
+
+            container.appendChild(card);
         });
+    }
+
+    function clearFilters() {
+        document.getElementById("q").value = "";
+        document.getElementById("repository").value = "";
+        document.getElementById("type_filter").value = "";
+        document.getElementById("year_from").value = "";
+        document.getElementById("year_to").value = "";
+        currentPage = 1;
+        hasSearched = false;
+        document.getElementById("resultsContainer").style.display = "none";
+        setStatus("Filtros limpiados");
+        document.getElementById("recordsInfo").textContent = "";
     }
 
     document.getElementById("searchBtn").addEventListener("click", () => {
         currentPage = 1;
         doSearch();
+    });
+
+    document.getElementById("clearBtn").addEventListener("click", () => {
+        clearFilters();
     });
 
     document.getElementById("prevPageBtn").addEventListener("click", () => {
@@ -337,9 +1043,16 @@
         doSearch();
     });
 
-    // Cargar stats y primera búsqueda en blanco
+    document.getElementById("q").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            currentPage = 1;
+            doSearch();
+        }
+    });
+
+    // Al cargar: estadísticas generales y top autores/temáticas (sin resultados iniciales)
     fetchStats();
-    doSearch();
+    fetchTopLists();
 </script>
 </body>
 </html>
